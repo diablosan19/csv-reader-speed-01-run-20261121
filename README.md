@@ -8,11 +8,13 @@
 (`{columns, rows, errors}` with the broken-CSV policy in the kit's RULES.txt:
 BOM drop, CRLF/LF record ends, stray_cr, quoted fields with `""` escapes,
 quote_junk, unterminated_quote as a literal, short_row/long_row padding and
-cutting), but faster: one pass, `indexOf`-driven field scanning, fields built
-with `String.slice` instead of per-character concatenation, no regex on the
-hot path. `main.ts` is the harness driver: it reads every case from
-`/input/cases.json`, answers each with `run`, and writes
-`/output/answers.json`.
+cutting), but faster: one pass, `indexOf`-driven field scanning, and the
+answer's JSON text is emitted directly while parsing instead of building an
+object graph and paying `JSON.stringify` over it, so the hot path holds no
+regex (one scan per case guards for control characters; the quoted span is
+tested for escapes only when it holds one). `main.ts` is the harness driver:
+it reads every case from `/input/cases.json`, answers each with `runJson`,
+and writes `/output/answers.json`.
 
 ## Run it
 
